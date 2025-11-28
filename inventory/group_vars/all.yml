@@ -1,1 +1,83 @@
 
+# ============================================================
+#  Variables globales pour toute l’infrastructure Démoday
+#  Fichier : inventory/group_vars/all.yml
+# ============================================================
+
+# -------------------------------
+# 1. Variables générales Ansible
+# -------------------------------
+ansible_user: "root"        # ↳ adapte selon ta VM
+ansible_become: true
+
+
+# -------------------------------
+# 2. Variables pour RESTIC BACKUP
+# -------------------------------
+
+# Dossiers à sauvegarder
+backup_paths:
+  - /etc
+  - /var/lib
+  # ajoute /home si tu veux
+  # - /home
+
+# Repository Restic principal (S3)
+restic_repository: "s3:s3.amazonaws.com/METTON_BUCKET/backups/{{ inventory_hostname }}"
+
+# Secrets chiffrés avec ansible-vault (exemples)
+restic_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256;CHANGE_ME
+  VAEGTNSIFNDSJIDFJSDFIJSDIJFS...mets ton vrai vault ici...
+
+restic_aws_key: !vault |
+  $ANSIBLE_VAULT;1.1;AES256;CHANGE_ME
+  ADGJSDGJSDGJDSGJDSGJDSGJGJ...
+
+restic_aws_secret: !vault |
+  $ANSIBLE_VAULT;1.1;AES256;CHANGE_ME
+  GSDGJDSGJSDGJDSGJDSGJSDGSJD...
+
+
+
+# -------------------------------
+# 3. Variables pour WAZUH (Manager + Agents)
+# -------------------------------
+
+# Adresse du manager (pour les agents)
+wazuh_manager_address: "11.11.11.10"   # ↳ adapter à ton infra interne
+
+# Fichiers personnalisés — contrôlés par Ansible
+wazuh_manager_local_rules: "/var/ossec/etc/rules/local_rules.xml"
+wazuh_manager_main_conf: "/var/ossec/etc/ossec.conf"
+
+# Agent configuration template variables
+wazuh_agent_conf_path: "/var/ossec/etc/ossec.conf"
+
+
+
+# -------------------------------
+# 4. Variables de sécurité
+# -------------------------------
+
+# Utilisé si tu veux que les machines communiquent entre elles via SSH
+backup_ssh_user: "backup"
+backup_ssh_key: "/root/.ssh/id_rsa"
+
+# Si tu veux ajouter plus tard des clés pour Wazuh filebeat / API
+wazuh_api_user: "wazuh"
+wazuh_api_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256;CHANGE_ME
+  HFSDJKHFSJKHFSJKHFJSKHFJKSHFJKSHF...
+
+
+# -------------------------------
+# 5. Paramètres pour les CRON (sauvegarde automatique)
+# -------------------------------
+backup_cron_hour: "02"
+backup_cron_minute: "30"
+backup_cron_user: "root"
+
+# Exemple :
+# La tâche Ansible construira :
+#   02:30 → cron lançant restic backup
