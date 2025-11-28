@@ -5,3 +5,5 @@ need to do the playbooks/wazuh.yml
 need to do the roles/backup/templates/restic_env.j2
 
 need to do the roles/wazuh_agent/tasks /main.yml
+
+need to do the roles/backup/templates/restic_env.j2
