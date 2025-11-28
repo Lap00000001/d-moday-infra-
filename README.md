@@ -1,0 +1,1 @@
+If all going fine, this should make really fast and easy the creation of a network, with a database, a serveur file, a DC1, a PFsense, a Wazuh/zabbix, an ansible and other little things, all already configured
