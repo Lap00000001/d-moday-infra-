@@ -11,3 +11,5 @@ Test each rules before deployement : wazuh-logtest (command to use on manager) i
 Utilise ansible-vault pour : mots de passe restic, clefs S3, clefs SSH d’accès vers cibles.
 Pas de secrets en clair dans le repo.
 Limite les accès SSH et utilise des clés dédiées deploy_key pour GitHub/Ansible.
+
+Chiffrer vault/credentials.yml via ansible-vault create vault/credentials.yml.
