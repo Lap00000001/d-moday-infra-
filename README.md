@@ -13,3 +13,13 @@ Pas de secrets en clair dans le repo.
 Limite les accès SSH et utilise des clés dédiées deploy_key pour GitHub/Ansible.
 
 Chiffrer vault/credentials.yml via ansible-vault create vault/credentials.yml.
+
+Lancer en mode dry-run :
+ansible-playbook -i inventory/hosts.ini playbooks/backup.yml --check --diff --ask-vault-pass
+
+Lancer sur une cible test :
+ansible-playbook -i inventory/hosts.ini playbooks/backup.yml --ask-vault-pass
+
+Vérifier logs restic : /var/log/restic-<host>.log et restic snapshots.
+
+Pour Wazuh : déployer sur une VM test, vérifier /var/ossec/logs/ossec.log, tester règle avec wazuh-logtest.
