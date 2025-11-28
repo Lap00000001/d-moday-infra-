@@ -1,1 +1,35 @@
 
+- name: Ensure restic installed
+  apt:
+    name: restic
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure restic repo initialized (S3 or SSH) - create env file
+  copy:
+    dest: /etc/restic_env
+    content: |
+      RESTIC_REPOSITORY={{ restic_repository }}
+      RESTIC_PASSWORD={{ restic_password }}
+      AWS_ACCESS_KEY_ID={{ restic_aws_key | default('') }}
+      AWS_SECRET_ACCESS_KEY={{ restic_aws_secret | default('') }}
+    mode: '0600'
+  no_log: true
+
+- name: Initialize restic repo if not initialized (example for s3)
+  shell: |
+    source /etc/restic_env
+    restic snapshots >/dev/null 2>&1 || restic init
+  args:
+    creates: /var/lib/restic-initialized-{{ inventory_hostname }}
+  register: restic_init
+  changed_when: "'created new repo' in restic_init.stdout or restic_init.rc==0"
+  no_log: true
+
+- name: Add cron job for daily backup at 02:30
+  cron:
+    name: "restic-daily-backup"
+    minute: "30"
+    hour: "2"
+    user: root
+    job: "source /etc/restic_env && /usr/bin/restic backup {{ backup_paths | join(' ') }} --tag {{ inventory_hostname }} >> /var/log/restic-{{ inventory_hostname }}.log 2>&1"
