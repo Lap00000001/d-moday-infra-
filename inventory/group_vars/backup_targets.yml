@@ -1,1 +1,46 @@
 
+---
+# ======================================================================
+#  Playbook principal — Démoday Infrastructure
+#  Orchestration complète : base, backup, wazuh manager & wazuh agents
+# ======================================================================
+
+# -------------------------------
+# BASE : configuration commune
+# (users, SSH, durcissement basique)
+# -------------------------------
+- name: Apply base configuration to all hosts
+  hosts: all
+  become: yes
+  roles:
+    - role: base
+
+
+# -------------------------------
+# BACKUP : installation + cron + restic
+# -------------------------------
+- name: Configure Restic backups on backup clients
+  hosts: backup_clients
+  become: yes
+  roles:
+    - role: backup
+
+
+# -------------------------------
+# WAZUH MANAGER
+# -------------------------------
+- name: Deploy Wazuh Manager configuration
+  hosts: managers
+  become: yes
+  roles:
+    - role: wazuh_manager
+
+
+# -------------------------------
+# WAZUH AGENTS
+# -------------------------------
+- name: Deploy Wazuh Agent configuration
+  hosts: agents
+  become: yes
+  roles:
+    - role: wazuh_agent
