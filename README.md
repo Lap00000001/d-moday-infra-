@@ -3,6 +3,7 @@ If all going fine, this should make really fast and easy the creation of a netwo
 1th mission will be to configure the correct Ip in the inventory/hosts.ini
 
 2th mission will be to adapted the inventory/group_vars/all.yml
+METTON_BUCKET and the secret keys
 
 3th mission will be to adapted the 
 
