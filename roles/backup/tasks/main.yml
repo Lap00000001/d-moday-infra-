@@ -1,35 +1,46 @@
-
-- name: Ensure restic installed
+---
+# roles/backup/tasks/main.yml
+- name: Ensure restic package is present (Debian/Ubuntu)
   apt:
     name: restic
     state: present
+    update_cache: yes
   when: ansible_os_family == 'Debian'
 
-- name: Ensure restic repo initialized (S3 or SSH) - create env file
-  copy:
+- name: Ensure restic directory for logs exists
+  file:
+    path: /var/log/restic
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy restic env file
+  template:
+    src: restic_env.j2
     dest: /etc/restic_env
-    content: |
-      RESTIC_REPOSITORY={{ restic_repository }}
-      RESTIC_PASSWORD={{ restic_password }}
-      AWS_ACCESS_KEY_ID={{ restic_aws_key | default('') }}
-      AWS_SECRET_ACCESS_KEY={{ restic_aws_secret | default('') }}
+    owner: root
+    group: root
     mode: '0600'
   no_log: true
 
-- name: Initialize restic repo if not initialized (example for s3)
+- name: Initialize restic repo if empty (run snapshots to check)
   shell: |
+    set -o pipefail
     source /etc/restic_env
     restic snapshots >/dev/null 2>&1 || restic init
   args:
-    creates: /var/lib/restic-initialized-{{ inventory_hostname }}
+    executable: /bin/bash
   register: restic_init
-  changed_when: "'created new repo' in restic_init.stdout or restic_init.rc==0"
+  changed_when: restic_init.rc == 0 and "'created new repo' in (restic_init.stdout|default(''))"
+  # it's noisy; no_log to hide secrets
   no_log: true
+  ignore_errors: yes
 
-- name: Add cron job for daily backup at 02:30
+- name: Install cron job for restic backup
   cron:
     name: "restic-daily-backup"
-    minute: "30"
-    hour: "2"
-    user: root
-    job: "source /etc/restic_env && /usr/bin/restic backup {{ backup_paths | join(' ') }} --tag {{ inventory_hostname }} >> /var/log/restic-{{ inventory_hostname }}.log 2>&1"
+    minute: "{{ backup_cron_minute | default('30') }}"
+    hour: "{{ backup_cron_hour | default('2') }}"
+    user: "{{ backup_cron_user | default('root') }}"
+    job: "source /etc/restic_env && /usr/bin/restic backup {{ backup_paths | join(' ') }} --tag {{ inventory_hostname }} >> /var/log/restic/{{ inventory_hostname }}.log 2>&1"
