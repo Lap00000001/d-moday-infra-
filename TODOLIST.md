@@ -14,3 +14,14 @@ roles/wazuh_manager/templates/ossec_conf.j2
 
 
 Use terraform to automatise the all network creation / deployement / configuration.
+
+PFsense
+
+AD LDAP
+
+IP DHCP
+
+CREATION SERVEUR FILE
+
+CREATION D4UNE BASE DE DONN2E
+
