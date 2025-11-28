@@ -4,6 +4,13 @@ If all going fine, this should make really fast and easy the creation of a netwo
 
 2th mission will be to adapted the inventory/group_vars/all.yml
 METTON_BUCKET and the secret keys
+Les valeurs restic_password, restic_aws_key, restic_aws_secret doivent être chiffrées via ansible-vault.
+ansible-vault encrypt_string 'MON_SECRET' --name 'restic_password'
+même chose pour les autres
+puis colle le bloc dans ci dessus (all.yml)
+ansible-vault encrypt vault/credentials.yml
+(<- pour un fichier complet)
+Quand tu lances ansible-playbook, ajoute --ask-vault-pass ou --vault-password-file.
 
 3th mission will be to adapted the 
 
