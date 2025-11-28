@@ -1,1 +1,6 @@
 
+- name: Deploy restic backup configuration and cron
+  hosts: backup_clients
+  become: yes
+  roles:
+    - role: backup
