@@ -22,8 +22,9 @@ backup_paths:
   # ajoute /home si tu veux
   # - /home
 
-# Repository Restic principal (S3)
-restic_repository: "s3:s3.amazonaws.com/METTON_BUCKET/backups/{{ inventory_hostname }}"
+# Repository Restic principal (S3) (https://amzn-bck-up.s3.eu-west-3.amazonaws.com/backups/)
+#restic_repository: "s3:s3.amazonaws.com/METTON_BUCKET/backups/{{ inventory_hostname }}"
+restic_repository: "s3:s3.amazonaws.com/amzn-bck-up/backups/{{ inventory_hostname }}"
 
 # Secrets chiffrés avec ansible-vault (exemples)
 restic_password: !vault |
