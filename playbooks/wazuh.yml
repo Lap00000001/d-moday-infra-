@@ -1,1 +1,16 @@
 
+---
+# playbooks/wazuh.yml
+# Deploy Wazuh manager and agent configurations
+
+- name: Deploy Wazuh Manager
+  hosts: managers
+  become: yes
+  roles:
+    - role: wazuh_manager
+
+- name: Deploy Wazuh Agents
+  hosts: agents
+  become: yes
+  roles:
+    - role: wazuh_agent
