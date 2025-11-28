@@ -7,3 +7,7 @@ If all going fine, this should make really fast and easy the creation of a netwo
 3th mission will be to adapted the 
 
 Test each rules before deployement : wazuh-logtest (command to use on manager) in order to check it. (tips : play this commande on a test VM)
+
+Utilise ansible-vault pour : mots de passe restic, clefs S3, clefs SSH d’accès vers cibles.
+Pas de secrets en clair dans le repo.
+Limite les accès SSH et utilise des clés dédiées deploy_key pour GitHub/Ansible.
