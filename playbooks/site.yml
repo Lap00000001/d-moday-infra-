@@ -1,1 +1,3 @@
 
+- import_playbook: playbooks/backup.yml
+- import_playbook: playbooks/wazuh.yml
